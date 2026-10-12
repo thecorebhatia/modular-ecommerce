@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  frontend:
+    image: node:20-alpine
+    container_name: modular_ecom_frontend
+    working_dir: /frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./frontend:/frontend
+      - frontend_node_modules:/frontend/node_modules
+    command: sh -c "npm install && npx ng serve --host 0.0.0.0 --poll 2000"
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: modular_ecom_kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFERED_CREDENTIALS: 'none'
+      CLUSTER_ID: '4L62YDGCQKWX9J34A61TAQ'
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+# Define the named volume at the very bottom of your compose file
+volumes:
+  kafka_data:
+  frontend_node_modules:
