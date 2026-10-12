@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/backend/app-runner/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/authentication-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/checkout-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/inventory-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/notification-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/order-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/payment-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/personalization-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/product-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/rating-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/shipping-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/backend/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
