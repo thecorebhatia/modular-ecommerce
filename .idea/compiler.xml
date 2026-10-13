@@ -8,8 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="app-runner" />
-        <module name="authentication-service" />
         <module name="product-service" />
+        <module name="authentication-service" />
         <module name="order-service" />
         <module name="notification-service" />
       </profile>
