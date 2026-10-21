@@ -8,12 +8,15 @@ import org.ecommerce.order.dto.*;
 import org.ecommerce.order.model.Order;
 import org.ecommerce.order.model.OrderOutbox;
 import org.ecommerce.order.model.OrderStatus;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.ecommerce.order.util.ServiceUtil;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.concurrent.ExecutionException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -22,16 +25,23 @@ public class OrderService {
     private final ProductClient productClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final OrderOutboxRepository outboxRepository;
+    private final OrderInventoryValidator inventoryValidator;
 
-    public OrderService(OrderRepository orderRepository, ProductClient productClient, OrderOutboxRepository outboxRepository) {
+    public OrderService(OrderRepository orderRepository, ProductClient productClient, OrderOutboxRepository outboxRepository, OrderInventoryValidator inventoryValidator) {
         this.orderRepository = orderRepository;
         this.productClient = productClient;
         this.outboxRepository = outboxRepository;
+        this.inventoryValidator = inventoryValidator;
     }
 
     @Transactional
-    public OrderResponse create(OrderRequest request) throws ExecutionException, InterruptedException {
+    public OrderServiceResponse create(OrderRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if(!inventoryValidator.validateAndDeductStock(request.productId(), request.quantity())) {
+            return ServiceUtil.getOrderServiceResponse(400, false, "Failed due to product SOLD out", null);
+        }
+
         ProductServiceResponse productServiceResponse = productClient.getProductDetails(request.productId());
 
         long finalPrice = productServiceResponse.productResponse()
@@ -59,6 +69,25 @@ public class OrderService {
         outbox.setPayload(jsonPayload);
         outboxRepository.save(outbox);
 
-        return new OrderResponse(order.getOrderId(), username, totalAmount, order.getStatus().toString());
+        return ServiceUtil.getOrderServiceResponse(200, true, "order created successfully", null);
+    }
+
+    public OrderServiceResponse getAll() {
+        List<Order> orderList = orderRepository.findAll();
+        if(Optional.of(orderList).isEmpty()) {
+            return ServiceUtil.getOrderServiceResponse(400, false, "Orders not available", null);
+        }
+
+        List<OrderResponse> orderResponseList = null;
+        orderResponseList = orderList.stream()
+                .filter(Objects::nonNull)
+                .map(order1 -> OrderResponse.builder()
+                        .orderId(order1.getOrderId())
+                        .status(order1.getStatus().name())
+                        .totalAmount(order1.getTotalAmount())
+                        .username(order1.getUsername())
+                        .build()).collect(Collectors.toList());
+        // Have to write
+        return ServiceUtil.getOrderServiceResponse(200, true, "successfully fetch order details", orderResponseList);
     }
 }

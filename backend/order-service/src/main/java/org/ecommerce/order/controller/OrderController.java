@@ -2,6 +2,7 @@ package org.ecommerce.order.controller;
 
 import org.ecommerce.order.dto.OrderRequest;
 import org.ecommerce.order.dto.OrderResponse;
+import org.ecommerce.order.dto.OrderServiceResponse;
 import org.ecommerce.order.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +19,13 @@ public class OrderController {
     }
 
     @PostMapping
-    public OrderResponse createOrder(@RequestBody OrderRequest request) throws ExecutionException, InterruptedException {
+    public OrderServiceResponse createOrder(@RequestBody OrderRequest request) throws ExecutionException, InterruptedException {
         return orderService.create(request);
+    }
+
+    @GetMapping
+    public OrderServiceResponse getOrders() throws ExecutionException, InterruptedException {
+        return orderService.getAll();
     }
 }
 

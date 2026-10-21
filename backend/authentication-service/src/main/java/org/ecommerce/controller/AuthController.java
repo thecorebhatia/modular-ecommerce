@@ -25,29 +25,19 @@ public class AuthController {
         this.jwtUtils = jwtUtils;
     }
 
-    // 1. Create User / Sign Up
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequest request) {
         if (userRepository.findByUsername(request.username()).isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Username already exists"));
         }
 
-        // Hash the password using BCrypt before saving
         String hashedPassword = passwordEncoder.encode(request.password());
         UserInfo newUser = new UserInfo(hashedPassword, request.username());
         userRepository.save(newUser);
 
-        // 🖨️ SYSTEM TERMINAL PRINT OUT: Fetch all and print immediately!
-        System.out.println("\n=== 🛠️ CURRENT H2 DATABASE 'USERS' TABLE === ");
-        userRepository.findAll().forEach(user -> {
-            System.out.println("ID: " + user.getId() + " | Username: " + user.getUsername() + " | Password HASH: " + user.getPassword());
-        });
-        System.out.println("=============================================\n");
-
         return ResponseEntity.ok(Map.of("message", "User registered successfully"));
     }
 
-    // 2. Login User & Generate JWT
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         Optional<UserInfo> userOpt = userRepository.findByUsername(request.username());
