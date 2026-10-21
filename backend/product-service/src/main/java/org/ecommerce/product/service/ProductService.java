@@ -49,7 +49,7 @@ public class ProductService {
     }
 
     public ProductServiceResponse getAll() {
-        List<Product> product = repository.findAll();
+        List<Product> product = repository.findAllWithCategory(); // to resolve N+1 problem
         if(Optional.of(product).isEmpty()) {
             return ServiceUtil.getProductServiceResponse(400, false, "Products not available", null);
         }

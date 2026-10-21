@@ -7,7 +7,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "products")
+@Table(
+        name = "products",
+        indexes = {
+                @Index(name = "idx_product_status", columnList = "status,productId")
+        }
+)
 @Getter
 @Setter
 @Builder
@@ -24,6 +29,8 @@ public class Product {
 
     private String title;
     private String description;
+
+    @Enumerated(EnumType.STRING) // will mark status as 0,1,2
     @Column(name = "status")
     private ProductStatus status;
 

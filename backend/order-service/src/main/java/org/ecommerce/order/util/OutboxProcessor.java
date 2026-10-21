@@ -28,21 +28,16 @@ public class OutboxProcessor {
 
         for (OrderOutbox message : unprocessedMessages) {
             try {
-                // Publish to Kafka and wait for acknowledgment
-                SendResult<String, String> result = kafkaTemplate
-                        .send("order-events-topic", message.getAggregateId(), message.getPayload())
-                        .get();
-
-                System.out.println("✅ [ORDER-SERVICE]: Message safely written to Partition: "
-                        + result.getRecordMetadata().partition() +
-                        " at Offset: " + result.getRecordMetadata().offset() +
-                        " at Topic: " + result.getRecordMetadata().topic() +
-                        " at Headers: " + result.getProducerRecord().headers()
-                );
+                kafkaTemplate
+                        .send("order-events-topic", message.getAggregateId(), message.getPayload());
 
                 // Mark as processed upon successful publishing
                 message.setProcessed(true);
+            /**
+                Not required dirty checking will update
+                save is redundant here
                 outboxRepository.save(message);
+             **/
             } catch (Exception e) {
                 System.err.println("❌ Failed to publish message " + message.getId() + ": " + e.getMessage());
                 break;
