@@ -3,6 +3,8 @@ package org.ecommerce.product.controller;
 import org.ecommerce.product.dto.ProductRequest;
 import org.ecommerce.product.dto.ProductServiceResponse;
 import org.ecommerce.product.service.ProductService;
+import org.ecommerce.shared.rate_limiter.LimiterStrategy;
+import org.ecommerce.shared.rate_limiter.RateLimited;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 

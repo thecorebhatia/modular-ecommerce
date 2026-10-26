@@ -12,7 +12,10 @@ public class ProductClient {
     private final RestClient restClient;
 
     public ProductClient() {
-        this.restClient = RestClient.builder().baseUrl("http://localhost:8080").build();
+        this.restClient = RestClient.builder()
+                .baseUrl("http://localhost:8080")
+                .defaultHeader("X-Internal-Call", "true")
+                .build();
     }
 
     @CircuitBreaker(name = "productService", fallbackMethod = "fallback")
